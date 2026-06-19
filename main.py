@@ -4,7 +4,6 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
-
 # -----------------------------
 # Note Model
 # -----------------------------
@@ -12,23 +11,18 @@ class Note(BaseModel):
     title: str
     content: str
 
-
 # -----------------------------
 # Home Route
 # -----------------------------
 @app.get("/")
 def home():
-    return {
-        "message": "Second Brain Backend Running"
-    }
-
+    return {"message": "Second Brain Backend Running"}
 
 # -----------------------------
 # Add Note
 # -----------------------------
 @app.post("/add-note")
 def add_note(note: Note):
-
     with open("notes.json", "r") as f:
         notes = json.load(f)
 
@@ -49,40 +43,38 @@ def add_note(note: Note):
     with open("notes.json", "w") as f:
         json.dump(notes, f, indent=4)
 
-    return {
-        "message": "Note saved successfully"
-    }
+    return {"message": "Note saved successfully"}
 
 # -----------------------------
 # View Notes
 # -----------------------------
 @app.get("/notes")
 def get_notes():
-
     with open("notes.json", "r") as f:
         notes = json.load(f)
-
     return notes
+
+# -----------------------------
+# Search Notes
+# -----------------------------
 @app.get("/search")
 def search_notes(keyword: str):
-
     with open("notes.json", "r") as f:
         notes = json.load(f)
 
     results = []
 
     for note in notes:
-
-        if (
-            keyword.lower() in note["title"].lower()
-            or keyword.lower() in note["content"].lower()
-        ):
+        if keyword.lower() in note["title"].lower() or keyword.lower() in note["content"].lower():
             results.append(note)
 
-    return results    
+    return results
+
+# -----------------------------
+# Delete Note
+# -----------------------------
 @app.delete("/delete-note/{title}")
 def delete_note(title: str):
-
     with open("notes.json", "r") as f:
         notes = json.load(f)
 
@@ -95,4 +87,4 @@ def delete_note(title: str):
     with open("notes.json", "w") as f:
         json.dump(updated_notes, f, indent=4)
 
-    return {"message": "Note deleted successfully"}    
+    return {"message": "Note deleted successfully"}
